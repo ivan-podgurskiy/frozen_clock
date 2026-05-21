@@ -1,15 +1,11 @@
-# MyPackage
+# FrozenClock
 
-[![CI](https://github.com/ivan-podgurskiy/hex-skeleton/actions/workflows/ci.yml/badge.svg)](https://github.com/ivan-podgurskiy/hex-skeleton/actions/workflows/ci.yml)
+[![CI](https://github.com/ivan-podgurskiy/frozen_clock/actions/workflows/ci.yml/badge.svg)](https://github.com/ivan-podgurskiy/frozen_clock/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Internal Elixir library skeleton: single public module, `stream_data` property tests,
 Credo, Dialyzer, ExDoc-ready metadata—aligned with how mature in-repo packages are
 structured (same CI shape as reference OSS libs).
-
-Rename the app (`:my_package` → `:your_app`), module (`MyPackage` → `YourApp`), and
-paths when cloning; update the README CI link, `mix.exs` `@source_url`, and
-`CHANGELOG` release URLs to match your repo.
 
 ## Installation
 
@@ -18,7 +14,7 @@ In sibling app `mix.exs`:
 ```elixir
 def deps do
   [
-    {:my_package, path: "../my_package"}
+    {:frozen_clock, path: "../frozen_clock"}
   ]
 end
 ```
@@ -28,7 +24,7 @@ Adjust the path or use `git:` / organization package name as you prefer.
 ## Quick start
 
 ```elixir
-MyPackage.example(21)
+FrozenClock.example(21)
 # => 42
 ```
 

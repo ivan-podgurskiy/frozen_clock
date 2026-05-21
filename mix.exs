@@ -1,12 +1,12 @@
-defmodule MyPackage.MixProject do
+defmodule FrozenClock.MixProject do
   use Mix.Project
 
   @version "0.1.0"
-  @source_url "https://github.com/ivan-podgurskiy/hex-skeleton"
+  @source_url "https://github.com/ivan-podgurskiy/frozen_clock"
 
   def project do
     [
-      app: :my_package,
+      app: :frozen_clock,
       version: @version,
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
@@ -17,7 +17,7 @@ defmodule MyPackage.MixProject do
       package: package(),
 
       # Docs
-      name: "MyPackage",
+      name: "FrozenClock",
       source_url: @source_url,
       docs: docs(),
 
@@ -57,7 +57,7 @@ defmodule MyPackage.MixProject do
 
   defp docs do
     [
-      main: "MyPackage",
+      main: "FrozenClock",
       source_ref: "v#{@version}",
       source_url: @source_url,
       extras: ["README.md", "CHANGELOG.md"]
