@@ -51,11 +51,9 @@ defmodule FrozenClock do
   at that instant.
   """
   @spec freeze() :: :ok
+  def freeze, do: freeze(DateTime.utc_now())
+
   @spec freeze(DateTime.t()) :: :ok
-  def freeze(at \\ nil)
-
-  def freeze(nil), do: freeze(DateTime.utc_now())
-
   def freeze(%DateTime{} = at) do
     Process.put(@key, at)
     :ok
