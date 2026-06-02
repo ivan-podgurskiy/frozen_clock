@@ -12,7 +12,7 @@ defmodule FrozenClock.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
 
-      # Hex (optional metadata if you ever publish)
+      # Hex
       description: description(),
       package: package(),
 
@@ -52,7 +52,8 @@ defmodule FrozenClock.MixProject do
     [
       files: ~w(lib .formatter.exs mix.exs README.md LICENSE CHANGELOG.md),
       licenses: ["MIT"],
-      links: %{"GitHub" => @source_url}
+      links: %{"GitHub" => @source_url},
+      maintainers: ["Ivan Podgurskiy"]
     ]
   end
 
@@ -61,7 +62,7 @@ defmodule FrozenClock.MixProject do
       main: "FrozenClock",
       source_ref: "v#{@version}",
       source_url: @source_url,
-      extras: ["README.md", "CHANGELOG.md"]
+      extras: ["README.md", "CHANGELOG.md", "LICENSE"]
     ]
   end
 end
