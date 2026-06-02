@@ -44,7 +44,8 @@ defmodule FrozenClock.MixProject do
   end
 
   defp description do
-    "Replace with a one-line description of your internal library."
+    "Async-safe, process-local freezing of DateTime.utc_now/0 for tests — " <>
+      "no behaviours, no mocks, no struct threaded through your code."
   end
 
   defp package do
