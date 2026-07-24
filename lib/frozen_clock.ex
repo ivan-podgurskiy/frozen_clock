@@ -183,9 +183,8 @@ defmodule FrozenClock do
     Process.get(@key) != nil
   end
 
-  defp utc_datetime(%DateTime{} = datetime) do
-    datetime
-    |> DateTime.to_unix(:microsecond)
-    |> DateTime.from_unix!(:microsecond)
+  defp utc_datetime(%DateTime{microsecond: {_, precision}} = datetime) do
+    {seconds, microseconds} = DateTime.to_gregorian_seconds(datetime)
+    DateTime.from_gregorian_seconds(seconds, {microseconds, precision}, Calendar.ISO)
   end
 end
