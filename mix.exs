@@ -1,7 +1,7 @@
 defmodule FrozenClock.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.2.0"
   @source_url "https://github.com/ivan-podgurskiy/frozen_clock"
 
   def project do
@@ -44,7 +44,7 @@ defmodule FrozenClock.MixProject do
   end
 
   defp description do
-    "Async-safe, process-local freezing of DateTime.utc_now/0 for tests — " <>
+    "Async-safe, process-local freezing of common UTC date/time calls for tests — " <>
       "no behaviours, no mocks, no struct threaded through your code."
   end
 

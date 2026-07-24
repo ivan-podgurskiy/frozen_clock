@@ -1,11 +1,12 @@
 defmodule FrozenClock do
   @moduledoc """
-  A minimal, async-safe wrapper around `DateTime.utc_now/0` that lets tests
+  Minimal, async-safe wrappers around common UTC date/time calls that let tests
   freeze and travel time **in the calling process**.
 
-  Replace direct calls to `DateTime.utc_now/0` with `FrozenClock.utc_now/0` in
-  production code. In tests, `freeze/0`, `freeze/1`, `travel/1`, and `travel/2`
-  pin or shift the clock for the current process only.
+  Replace direct calls like `DateTime.utc_now/0`, `System.system_time/1`, and
+  `Date.utc_today/0` with the matching `FrozenClock` wrapper in production
+  code. In tests, `freeze/0`, `freeze/1`, `travel/1`, and `travel/2` pin or
+  shift the clock for the current process only.
 
   ## Isolation
 
@@ -41,6 +42,71 @@ defmodule FrozenClock do
     case Process.get(@key) do
       nil -> DateTime.utc_now()
       %DateTime{} = frozen -> frozen
+    end
+  end
+
+  @doc """
+  Returns the current system time in native time units.
+
+  When the calling process has frozen time, derives the integer timestamp from
+  the frozen `DateTime`; otherwise delegates to `System.system_time/0`.
+  """
+  @spec system_time() :: integer()
+  def system_time, do: system_time(:native)
+
+  @doc """
+  Returns the current system time in `unit`.
+
+  When the calling process has frozen time, derives the integer timestamp from
+  the frozen `DateTime`; otherwise delegates to `System.system_time/1`.
+  """
+  @spec system_time(System.time_unit()) :: integer()
+  def system_time(unit) do
+    case Process.get(@key) do
+      nil -> System.system_time(unit)
+      %DateTime{} = frozen -> DateTime.to_unix(frozen, unit)
+    end
+  end
+
+  @doc """
+  Returns the current UTC date.
+
+  When the calling process has frozen time, derives the date from the frozen
+  `DateTime`; otherwise delegates to `Date.utc_today/0`.
+  """
+  @spec utc_today() :: Date.t()
+  def utc_today do
+    case Process.get(@key) do
+      nil -> Date.utc_today()
+      %DateTime{} = frozen -> DateTime.to_date(frozen)
+    end
+  end
+
+  @doc """
+  Returns the current UTC time.
+
+  When the calling process has frozen time, derives the time from the frozen
+  `DateTime`; otherwise delegates to `Time.utc_now/0`.
+  """
+  @spec utc_time() :: Time.t()
+  def utc_time do
+    case Process.get(@key) do
+      nil -> Time.utc_now()
+      %DateTime{} = frozen -> DateTime.to_time(frozen)
+    end
+  end
+
+  @doc """
+  Returns the current naive UTC datetime.
+
+  When the calling process has frozen time, derives the value from the frozen
+  `DateTime`; otherwise delegates to `NaiveDateTime.utc_now/0`.
+  """
+  @spec naive_utc_now() :: NaiveDateTime.t()
+  def naive_utc_now do
+    case Process.get(@key) do
+      nil -> NaiveDateTime.utc_now()
+      %DateTime{} = frozen -> DateTime.to_naive(frozen)
     end
   end
 

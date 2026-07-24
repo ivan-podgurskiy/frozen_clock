@@ -3,20 +3,21 @@
 [![CI](https://github.com/ivan-podgurskiy/frozen_clock/actions/workflows/ci.yml/badge.svg)](https://github.com/ivan-podgurskiy/frozen_clock/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A minimal, async-safe wrapper around `DateTime.utc_now/0` that lets tests freeze
-and travel time **in the calling process** — no behaviours, no mocks, no struct
-threaded through your function signatures.
+Minimal, async-safe wrappers around common UTC date/time calls that let tests
+freeze and travel time **in the calling process** — no behaviours, no mocks, no
+struct threaded through your function signatures.
 
-Replace `DateTime.utc_now/0` with `FrozenClock.utc_now/0` in production code, and
-freeze time in tests. State lives in the process dictionary, so `async: true`
-tests are isolated out of the box.
+Replace direct calls like `DateTime.utc_now/0`, `System.system_time/1`, and
+`Date.utc_today/0` with the matching `FrozenClock` wrapper in production code,
+and freeze time in tests. State lives in the process dictionary, so async tests
+are isolated out of the box.
 
 ## Installation
 
 ```elixir
 def deps do
   [
-    {:frozen_clock, "~> 0.1.0"}
+    {:frozen_clock, "~> 0.2.0"}
   ]
 end
 ```
@@ -53,6 +54,11 @@ raises.
 
 ```elixir
 FrozenClock.utc_now()                       # frozen value or real DateTime
+FrozenClock.system_time()                   # frozen or real System.system_time/0
+FrozenClock.system_time(:second)            # frozen or real System.system_time/1
+FrozenClock.utc_today()                     # frozen or real Date.utc_today/0
+FrozenClock.utc_time()                      # frozen or real Time.utc_now/0
+FrozenClock.naive_utc_now()                 # frozen or real NaiveDateTime.utc_now/0
 FrozenClock.freeze()                         # freeze at the current real time
 FrozenClock.freeze(~U[2026-01-01 00:00:00Z]) # freeze at a specific instant
 FrozenClock.travel(~U[2026-06-01 12:00:00Z]) # jump to an instant (freezes if needed)
@@ -75,7 +81,7 @@ what you want and keeps async tests safe. If you need cross-process freeze, use
 
 | Need | Use |
 |---|---|
-| Freeze `utc_now` in a test (same process) | **FrozenClock** |
+| Freeze UTC date/time wrappers in a test (same process) | **FrozenClock** |
 | Minimal API, no magic, no extra arguments in production code | **FrozenClock** |
 | Explicit DI: a clock struct + protocol passed as a function argument | [`clock`](https://hex.pm/packages/clock) |
 | Control `Process.send_after/3`, `:timer`, scheduled work | [`klotho`](https://hex.pm/packages/klotho) |
