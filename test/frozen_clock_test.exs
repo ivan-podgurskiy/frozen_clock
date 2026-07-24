@@ -14,6 +14,26 @@ defmodule FrozenClockTest do
     end
   end
 
+  describe "stdlib time wrappers without freeze" do
+    test "system_time/0 returns an integer in native time units" do
+      now = FrozenClock.system_time()
+
+      assert is_integer(now)
+    end
+
+    test "system_time/1 returns an integer in the requested time unit" do
+      now = FrozenClock.system_time(:second)
+
+      assert is_integer(now)
+    end
+
+    test "date, time, and naive datetime wrappers return real values" do
+      assert %Date{} = FrozenClock.utc_today()
+      assert %Time{} = FrozenClock.utc_time()
+      assert %NaiveDateTime{} = FrozenClock.naive_utc_now()
+    end
+  end
+
   describe "freeze/0" do
     test "returns the same value on repeated utc_now/0 calls" do
       assert :ok = FrozenClock.freeze()
@@ -31,6 +51,56 @@ defmodule FrozenClockTest do
       assert :ok = FrozenClock.freeze(at)
 
       assert FrozenClock.utc_now() == at
+    end
+
+    test "pins derived stdlib time wrappers to the given DateTime" do
+      at = ~U[2026-01-01 12:34:56.789123Z]
+
+      expected_native =
+        System.convert_time_unit(1_767_270_896_789_123, :microsecond, :native)
+
+      assert :ok = FrozenClock.freeze(at)
+
+      assert FrozenClock.system_time() == expected_native
+      assert FrozenClock.system_time(:microsecond) == 1_767_270_896_789_123
+      assert FrozenClock.utc_today() == ~D[2026-01-01]
+      assert FrozenClock.utc_time() == ~T[12:34:56.789123]
+      assert FrozenClock.naive_utc_now() == ~N[2026-01-01 12:34:56.789123]
+    end
+
+    test "derives UTC wrappers from the frozen instant, not the DateTime zone" do
+      at = %DateTime{
+        calendar: Calendar.ISO,
+        year: 2026,
+        month: 1,
+        day: 2,
+        hour: 1,
+        minute: 30,
+        second: 0,
+        microsecond: {123_456, 6},
+        time_zone: "Custom/Plus02",
+        zone_abbr: "+02",
+        utc_offset: 7200,
+        std_offset: 0
+      }
+
+      assert :ok = FrozenClock.freeze(at)
+
+      assert FrozenClock.utc_today() == ~D[2026-01-01]
+      assert FrozenClock.utc_time() == ~T[23:30:00.123456]
+      assert FrozenClock.naive_utc_now() == ~N[2026-01-01 23:30:00.123456]
+    end
+
+    test "derives UTC wrappers outside the Unix datetime range" do
+      date = Date.new!(10_000, 1, 1)
+      time = Time.new!(12, 34, 56, {123_456, 6})
+      at = DateTime.new!(date, time, "Etc/UTC")
+
+      assert :ok = FrozenClock.freeze(at)
+
+      assert FrozenClock.utc_today() == date
+      assert FrozenClock.utc_time() == time
+      assert FrozenClock.naive_utc_now() == NaiveDateTime.new!(date, time)
     end
   end
 
