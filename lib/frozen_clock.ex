@@ -23,6 +23,7 @@ defmodule FrozenClock do
   """
 
   @key :frozen_clock_at
+  @type system_time_unit :: System.time_unit() | :native
 
   @doc """
   Returns the current time.
@@ -52,7 +53,9 @@ defmodule FrozenClock do
   the frozen `DateTime`; otherwise delegates to `System.system_time/0`.
   """
   @spec system_time() :: integer()
-  def system_time, do: system_time(:native)
+  def system_time do
+    system_time(:native)
+  end
 
   @doc """
   Returns the current system time in `unit`.
@@ -60,7 +63,7 @@ defmodule FrozenClock do
   When the calling process has frozen time, derives the integer timestamp from
   the frozen `DateTime`; otherwise delegates to `System.system_time/1`.
   """
-  @spec system_time(System.time_unit()) :: integer()
+  @spec system_time(system_time_unit()) :: integer()
   def system_time(unit) do
     case Process.get(@key) do
       nil -> System.system_time(unit)
