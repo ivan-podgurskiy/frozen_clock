@@ -71,6 +71,29 @@ defmodule FrozenClockTest do
       assert FrozenClock.utc_time() == ~T[12:34:56.789123]
       assert FrozenClock.naive_utc_now() == ~N[2026-01-01 12:34:56.789123]
     end
+
+    test "derives UTC wrappers from the frozen instant, not the DateTime zone" do
+      at = %DateTime{
+        calendar: Calendar.ISO,
+        year: 2026,
+        month: 1,
+        day: 2,
+        hour: 1,
+        minute: 30,
+        second: 0,
+        microsecond: {123_456, 6},
+        time_zone: "Custom/Plus02",
+        zone_abbr: "+02",
+        utc_offset: 7200,
+        std_offset: 0
+      }
+
+      assert :ok = FrozenClock.freeze(at)
+
+      assert FrozenClock.utc_today() == ~D[2026-01-01]
+      assert FrozenClock.utc_time() == ~T[23:30:00.123456]
+      assert FrozenClock.naive_utc_now() == ~N[2026-01-01 23:30:00.123456]
+    end
   end
 
   describe "unfreeze/0" do

@@ -81,7 +81,7 @@ defmodule FrozenClock do
   def utc_today do
     case Process.get(@key) do
       nil -> Date.utc_today()
-      %DateTime{} = frozen -> DateTime.to_date(frozen)
+      %DateTime{} = frozen -> frozen |> utc_datetime() |> DateTime.to_date()
     end
   end
 
@@ -95,7 +95,7 @@ defmodule FrozenClock do
   def utc_time do
     case Process.get(@key) do
       nil -> Time.utc_now()
-      %DateTime{} = frozen -> DateTime.to_time(frozen)
+      %DateTime{} = frozen -> frozen |> utc_datetime() |> DateTime.to_time()
     end
   end
 
@@ -109,7 +109,7 @@ defmodule FrozenClock do
   def naive_utc_now do
     case Process.get(@key) do
       nil -> NaiveDateTime.utc_now()
-      %DateTime{} = frozen -> DateTime.to_naive(frozen)
+      %DateTime{} = frozen -> frozen |> utc_datetime() |> DateTime.to_naive()
     end
   end
 
@@ -181,5 +181,11 @@ defmodule FrozenClock do
   @spec frozen?() :: boolean()
   def frozen? do
     Process.get(@key) != nil
+  end
+
+  defp utc_datetime(%DateTime{} = datetime) do
+    datetime
+    |> DateTime.to_unix(:microsecond)
+    |> DateTime.from_unix!(:microsecond)
   end
 end
